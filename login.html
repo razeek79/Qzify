@@ -74,12 +74,7 @@
     </div>
 
     <script type="module">
-        import { createClient } from "https://esm.sh/@supabase/supabase-js";
-
-        // Your Credentials
-        const supabaseUrl = "https://qfgqetshftvwkqkvbgrz.supabase.co";
-        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmZ3FldHNoZnR2d2txa3ZiZ3J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyNzcyMTYsImV4cCI6MjA4MDg1MzIxNn0.CtcxOaqh7887OIY4hvjiZzZhAxkoBb7ePD9o9mp-Rkg";
-        const supabase = createClient(supabaseUrl, supabaseKey);
+        import { supabase } from "./config.js";
 
         // Elements
         const emailForm = document.getElementById("emailForm");
