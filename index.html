@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qzify</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand navbar-brand-center" href="#">
+            <img src="/Qzify-images/logo2.png" alt="Qzify Logo" style="height: 60px;"/>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav mr-auto">
+                <a class="nav-link active" style="color: black; margin-top: 6px;" href="#">HOME</a>
+                <a class="nav-link" href="#" style="color: black; margin-top: 6px;">ABOUT</a>
+            </div>
+
+            <div class="navbar-nav ml-auto">
+                <a class="nav-link" href="#" style="color: black; margin-top: 6px;">CONTACT US</a>
+                <div style="width: 100%; height: 2px; background-color: rgb(197, 196, 196); margin: 10px 0;" class="d-md-none"></div>
+                
+                <button id="mainBtn" 
+                    style="height: 50px; width: 180px; background-color: black; border-width: 0px; border-radius: 25px; color: white;" 
+                    class="nav-link mt-3 mt-md-0">
+                    GET STARTED
+                </button>
+            </div>
+        </div>
+        <style>
+            @media (min-width: 992px) {
+                .navbar-brand-center {
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    z-index: 999;
+                }
+            }
+        </style>
+    </nav>
+
+    <section class="hero-wrapper">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-left mt-5 pt-5">
+                    <h1 class="hero-title">Create Quizzes in Minutes. Test Smarter with Qzify.</h1>
+                    <p class="hero-text">
+                        Qzify makes quiz creation effortless for teachers and fun for students.
+                        Build quizzes, share a simple join code, and get instant results.
+                    </p>
+                    <button id="createQuizBtn" style="height: 50px; width: 180px; background-color: black; border-width: 0px; border-radius: 25px; color: white;" class="mt-3">Create Quiz</button>
+                    <button id="joinQuizBtn" style="height: 50px; width: 180px; background-color: white; border: 2px solid black; border-radius: 25px; color: black;" class="mt-3 ml-3">Join Quiz</button>
+                </div>
+
+                <div class="col-md-6 mt-4 mt-md-0 text-center">
+                    <img src="/Qzify-images/Laptop corner.png" class="img-fluid hero-img" alt="Qzify Hero Image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script type="module">
+        import { createClient } from "https://esm.sh/@supabase/supabase-js";
+
+        // Your specific Supabase credentials
+        const supabaseUrl = "https://qfgqetshftvwkqkvbgrz.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmZ3FldHNoZnR2d2txa3ZiZ3J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyNzcyMTYsImV4cCI6MjA4MDg1MzIxNn0.CtcxOaqh7887OIY4hvjiZzZhAxkoBb7ePD9o9mp-Rkg";
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const mainBtn = document.getElementById("mainBtn");
+        const createQuizBtn = document.getElementById("createQuizBtn");
+
+        async function checkUser() {
+            // Check if user is logged in
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (session) {
+                // USER IS LOGGED IN
+                mainBtn.textContent = "CREATE QUIZ"; // Change text
+                mainBtn.style.width = "180px"; 
+            } else {
+                // USER IS NOT LOGGED IN
+                mainBtn.textContent = "GET STARTED";
+            }
+        }
+
+        // Run this check immediately when page loads
+        checkUser();
+
+        // LOGIC: What happens when you click 'GET STARTED' / 'CREATE QUIZ'
+        async function handleAuthClick() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                // If logged in, go to Create Quiz Page
+                window.location.href = "create-quiz.html";
+            } else {
+                // If NOT logged in, go to Login Page
+                window.location.href = "login.html";
+            }
+        }
+
+        // Apply logic to both buttons
+        mainBtn.addEventListener("click", handleAuthClick);
+        createQuizBtn.addEventListener("click", handleAuthClick);
+
+    </script>
+</body>
+</html>

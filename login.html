@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Qzify</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            background: #f8f9fa; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-box { 
+            background: white; 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1); 
+            width: 100%; 
+            max-width: 400px; 
+        }
+        .btn-black {
+            background-color: black;
+            color: white;
+            border-radius: 25px;
+            font-weight: 600;
+        }
+        .btn-black:hover { color: #ccc; }
+        
+        /* Hide the OTP step initially */
+        #otpStep { display: none; }
+    </style>
+</head>
+<body>
+    <div class="login-box text-center">
+        <a href="index.html">
+            <img src="/Qzify-images/logo2.png" alt="Logo" style="height: 50px; margin-bottom: 20px;">
+        </a>
+        <h4 class="mb-2">Welcome</h4>
+        <p class="text-muted mb-4" style="font-size: 14px;">Log in or Sign up with OTP</p>
+
+        <form id="emailForm">
+            <div class="form-group text-left">
+                <label for="email" style="font-weight: 600; font-size: 14px;">Email Address</label>
+                <input type="email" id="email" class="form-control" placeholder="name@example.com" required style="border-radius: 10px;">
+            </div>
+            <button type="submit" id="sendCodeBtn" class="btn btn-black btn-block" style="height: 45px;">
+                Send Code
+            </button>
+        </form>
+
+        <form id="otpForm">
+            <div id="otpStep">
+                <div class="form-group text-left">
+                    <label for="otp" style="font-weight: 600; font-size: 14px;">Enter OTP Code</label>
+                    <input type="text" id="otp" class="form-control text-center" placeholder="123456" maxlength="6" required style="border-radius: 10px; letter-spacing: 5px; font-size: 20px;">
+                    <small class="form-text text-muted text-center mt-2">
+                        Sent to <span id="displayEmail" style="font-weight:bold;"></span>
+                    </small>
+                </div>
+                <button type="submit" id="verifyBtn" class="btn btn-black btn-block" style="height: 45px;">
+                    Verify & Login
+                </button>
+                <button type="button" id="backBtn" class="btn btn-link btn-sm mt-2" style="color: #666;">
+                    Change Email
+                </button>
+            </div>
+        </form>
+
+        <div id="message" class="mt-3" style="font-size: 14px;"></div>
+    </div>
+
+    <script type="module">
+        import { createClient } from "https://esm.sh/@supabase/supabase-js";
+
+        // Your Credentials
+        const supabaseUrl = "https://qfgqetshftvwkqkvbgrz.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmZ3FldHNoZnR2d2txa3ZiZ3J6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyNzcyMTYsImV4cCI6MjA4MDg1MzIxNn0.CtcxOaqh7887OIY4hvjiZzZhAxkoBb7ePD9o9mp-Rkg";
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        // Elements
+        const emailForm = document.getElementById("emailForm");
+        const otpForm = document.getElementById("otpForm");
+        const emailInput = document.getElementById("email");
+        const otpInput = document.getElementById("otp");
+        const sendCodeBtn = document.getElementById("sendCodeBtn");
+        const verifyBtn = document.getElementById("verifyBtn");
+        const otpStep = document.getElementById("otpStep");
+        const messageDiv = document.getElementById("message");
+        const backBtn = document.getElementById("backBtn");
+
+        let userEmail = "";
+
+        // 1. SEND OTP CODE
+        emailForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            userEmail = emailInput.value;
+            
+            sendCodeBtn.disabled = true;
+            sendCodeBtn.textContent = "Sending...";
+            messageDiv.textContent = "";
+
+            const { error } = await supabase.auth.signInWithOtp({
+                email: userEmail
+            });
+
+            if (error) {
+                messageDiv.className = "mt-3 text-danger";
+                messageDiv.textContent = error.message;
+                sendCodeBtn.disabled = false;
+                sendCodeBtn.textContent = "Send Code";
+            } else {
+                // Success: Hide Email Form, Show OTP Form
+                emailForm.style.display = "none";
+                otpStep.style.display = "block";
+                document.getElementById("displayEmail").textContent = userEmail;
+                messageDiv.textContent = "";
+            }
+        });
+
+        // 2. VERIFY OTP CODE
+        otpForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const token = otpInput.value;
+
+            verifyBtn.disabled = true;
+            verifyBtn.textContent = "Verifying...";
+
+            const { data, error } = await supabase.auth.verifyOtp({
+                email: userEmail,
+                token: token,
+                type: 'email'
+            });
+
+            if (error) {
+                messageDiv.className = "mt-3 text-danger";
+                messageDiv.textContent = "Invalid code. Please try again.";
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = "Verify & Login";
+            } else {
+                // Success! Redirect
+                window.location.href = "index.html";
+            }
+        });
+
+        // 3. Back Button
+        backBtn.addEventListener("click", () => {
+            otpStep.style.display = "none";
+            emailForm.style.display = "block";
+            sendCodeBtn.disabled = false;
+            sendCodeBtn.textContent = "Send Code";
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = "Verify & Login";
+        });
+    </script>
+</body>
+</html>

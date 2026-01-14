@@ -1,0 +1,115 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-bottom: 80px; /* Space for bottom button on mobile */
+}
+
+.main-content {
+    padding-top: 80px;
+    max-width: 800px;
+}
+
+.page-title {
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* Card Styling */
+.card-box {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    margin-bottom: 20px;
+}
+
+.section-title {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Dashed Button for Adding Questions */
+.btn-dashed {
+    border: 2px dashed #ccc;
+    color: #666;
+    font-weight: 500;
+}
+.btn-dashed:hover {
+    border-color: #000;
+    color: #000;
+    background: transparent;
+}
+
+/* Question List Items */
+.question-item {
+    background: #f9f9f9;
+    border-left: 4px solid black;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+/* Template Selection */
+.template-grid {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.template-option {
+    cursor: pointer;
+    text-align: center;
+    min-width: 100px;
+    opacity: 0.6;
+    transition: 0.2s;
+}
+
+.template-option.selected {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.template-option.selected .template-preview {
+    border-color: black !important;
+    box-shadow: 0 0 0 2px black;
+}
+
+.template-preview {
+    height: 70px;
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 5px;
+}
+
+/* Button Styling */
+.btn-black {
+    background-color: black;
+    color: white;
+    border-radius: 25px;
+    font-weight: 600;
+}
+.btn-black:hover {
+    background-color: #333;
+    color: white;
+}
+
+/* Mobile Bottom Bar for Create Button */
+@media (max-width: 767px) {
+    .fixed-bottom-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: white;
+        padding: 15px;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+    }
+}
+@media (min-width: 768px) {
+    .fixed-bottom-bar {
+        margin-top: 30px;
+    }
+}
